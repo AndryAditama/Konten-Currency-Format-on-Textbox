@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Number Format</title>
+</head>
+
+<body>
+    <div class="container">
+        <p>Normal Textbox</p>
+        <div class="input-box">
+            <label for="input1">Rp.</label>
+            <input type="text" id="input1" pattern="^[0-9]*$">
+        </div>
+        <br>
+
+        <p>With Currency Format</p>
+        <div class="input-box">
+            <label for="input">Rp.</label>
+            <input type="text" id="input">
+        </div>
+    </div>
+
+    <script>
+        function onlyNumberKey(evt) {
+            let ASCIICode = (evt.which) ? evt.which : evt.keyCode
+            if (ASCIICode > 31 && (ASCIICode <= 48 || ASCIICode > 57))
+                return false;
+            return true;
+        }
+    </script>
+
+    <script>
+        //mengambil element input pada document halaman web
+        var numberInput = document.getElementById("input");
+
+        //jalankan function convert inputan ke format mata uang
+        numberInput.addEventListener("keyup", function (e) {
+            numberInput.value = convertRupiah(this.value);
+        });
+
+        //menjalankan function isNumberKey
+        numberInput.addEventListener('keypress', function (event) {
+            return isNumberKey(event);
+        });
+
+        //function untuk mengubah inputan ke format mata uang
+        function convertRupiah(angka, prefix) {
+            var number_string = angka.replace(/[^,\d]/g, "").toString(),
+                split = number_string.split(","),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                separator = sisa ? "." : "";
+                rupiah += separator + ribuan.join(".");
+            }
+
+            rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+            return prefix == undefined ? rupiah : rupiah ? prefix + rupiah : "";
+        }
+
+        //function dibawah untuk mengijinkan user hanya dapat menginput angka
+        function isNumberKey(evt) {
+            key = evt.which || evt.keyCode;
+            if (key != 188 // Comma
+                && key != 8 // Backspace
+                && key != 17 && key != 86 & key != 67 // Ctrl c, ctrl v
+                && (key < 48 || key > 57) // Non digit
+            ) {
+                evt.preventDefault();
+                return;
+            }
+        }
+    </script>
+</body>
+
+</html>
